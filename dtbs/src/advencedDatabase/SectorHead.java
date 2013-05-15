@@ -47,7 +47,7 @@ final class SectorHead implements Serializable {
 		return sectorSize;
 	}
 
-	public void setSectorSize(Long sectorSize) {
+	protected void setSectorSize(Long sectorSize) {
 		this.sectorSize = sectorSize;
 	}
 
@@ -55,7 +55,7 @@ final class SectorHead implements Serializable {
 		return emptySpacePointer;
 	}
 
-	public void setEmptySpacePointer(Long emptySpacePointer) {
+	protected void setEmptySpacePointer(Long emptySpacePointer) {
 		this.emptySpacePointer = emptySpacePointer;
 	}
 
@@ -63,7 +63,7 @@ final class SectorHead implements Serializable {
 		return freeSpace;
 	}
 
-	public void setFreeSpace(Long freeSpace) {
+	protected void setFreeSpace(Long freeSpace) {
 		this.freeSpace = freeSpace;
 	}
 
@@ -75,33 +75,27 @@ final class SectorHead implements Serializable {
 		return lock == 1;
 	}
 
-
-	public void setLock(boolean lock) {
+	protected void setLock(boolean lock) {
 		this.lock = (byte) (lock?1:0);
 	}
-
 
 	public int getMaxAllowedObjects() {
 		return maxAllowedObjects;
 	}
 
-
-	public void setMaxAllowedObjects(int maxAllowedObjects) {
+	protected void setMaxAllowedObjects(int maxAllowedObjects) {
 		this.maxAllowedObjects = maxAllowedObjects;
 	}
-
-
 
 	public int getSECTOR_HEAD_SIZE() {
 		return SECTOR_HEAD_SIZE;
 	}
 
-
 	public int getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	protected void setId(int id) {
 		this.id = id;
 	}
 
@@ -113,8 +107,7 @@ final class SectorHead implements Serializable {
 		bb.putLong(sectorSize);
 		bb.putLong(emptySpacePointer);
 		bb.putLong(freeSpace);
-		return bb.array();
-		
+		return bb.array();		
 	}
 	
 	public void deSerializable(byte[] data) {
@@ -124,8 +117,43 @@ final class SectorHead implements Serializable {
 		maxAllowedObjects = bb.getInt();
 		sectorSize = bb.getLong();
 		emptySpacePointer = bb.getLong();
-		freeSpace = bb.getLong();
-		
+		freeSpace = bb.getLong();		
+	}
+	
+	public boolean check(Long size){
+		if(lock  == (byte)1 ||  maxAllowedObjects == 0)
+			return false;
+		if(freeSpace == -1){
+			return true;
+		}else if (freeSpace < size) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	protected boolean forcedCheck(Long size){
+		if(freeSpace == -1){
+			return true;
+		}else if (freeSpace < size) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	public SectorHead reCount(Long objectSize) {
+		if(check(objectSize)){
+			if(!(freeSpace == -1)){			
+				freeSpace -=objectSize;
+			}
+			emptySpacePointer += objectSize;
+			
+			if(!(maxAllowedObjects == -1)){
+				maxAllowedObjects--;
+			}
+		}
+		return this;
 	}
 	
 }

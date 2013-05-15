@@ -48,8 +48,7 @@ public class AdvencedDatabase {
 		writeDatabaseFileHeader();
 		SectorHead sh = new SectorHead(head.getBlockSize(), 0);
 		writeSectorHead(head.getDataPosition(), sh);
-		sectorMap.add(head.getDataPosition(), sh.getSectorSize(),
-				sh.getFreeSpace());
+		sectorMap.add(head.getDataPosition());
 		writeObject(sectorMap, head.getSectorMapPosition());
 	}
 
@@ -88,11 +87,10 @@ public class AdvencedDatabase {
 					+ e);
 		}
 	}
-
-	
-	//no implementation
+	   	
 	private void readDatabaseFileHeader() throws DatabaseException {
-
+		head = new DatabaseHead();
+		head.deSerializable(readByteArray(0L, head.getDATABASE_HEAD_SIZE()));
 	}
 
 	private DataHead readDataHead(Long pos) throws DatabaseException {
@@ -186,7 +184,7 @@ public class AdvencedDatabase {
 	}
 
 	private void writeDatabaseFileHeader() throws DatabaseException {
-		
+		writeByteArray(0L, head.serializable());
 	}
 
 	private void writeDataHead(Long pos, DataHead head)
@@ -348,4 +346,19 @@ public class AdvencedDatabase {
 		writeObject(sectorMap, head.getSectorMapPosition());
 	}
 
+	/*private Long findEmptyPosition(){
+		for (int i = sectorMap.; i < array.length; i++) {
+			
+		}
+	}
+	
+	public Position writeObject(Object o){
+		Long positionLong = 
+	}*/
+	
 }
+
+
+
+
+

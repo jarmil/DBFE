@@ -12,36 +12,36 @@ final class SectorMap implements Serializable {
 	private int size;
 	private int capacity;
 
-	private Entry[] list;	
-
+	private Long[] list;		
+	
 	public SectorMap() {
 		capacity = 10;
 		size = 0;
-		list = new Entry[capacity];
+		list = new Long[capacity];
 
 	}
 
-	public void add(Long position, Long length, Long freeSpace) {
+	public void add(Long position) {
 		if (size >= capacity) {
 			ensureCapacity();
 		}
-		Entry entry = new Entry(position, length, freeSpace);
-		list[size] = entry;
+		
+		list[size] = position;
 		size++;
 	}
 
-	public void change(int index, Entry e) {
+	public void change(int index, Long position) {
 		if (index >= size) {
 			return;
 		}
-		list[index] = e;
+		list[index] = position;
 	}
 
-	public Entry get(int index) {
+	public Long get(int index) {
 		if (index >= size) {
 			return null;
 		}
-		return list[index].clone();
+		return list[index];
 	}
 
 	private void ensureCapacity() {
@@ -49,72 +49,5 @@ final class SectorMap implements Serializable {
 		capacity *= capacity;
 	}
 
-	public class Entry implements Serializable {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -2161999142074966797L;
-		private Long position;
-		private Long length;
-		private Long freeSpace;
-		private boolean lock;
-		private int maxObject;
-
-		public Entry(Long position, Long length, Long freeSpace) {
-			super();
-			this.position = position;
-			this.length = length;
-			this.freeSpace = freeSpace;
-		}
-
-		public Long getPosition() {
-			return position;
-		}
-
-		public void setPosition(Long pos) {
-			if (pos <= 0)
-				return;
-			this.position = pos;
-		}
-
-		public Long getLength() {
-			return length;
-		}
-
-		public void setLength(Long length) {
-			if (length < 0)
-				return;
-			this.length = length;
-		}
-
-		public Long getFreeSpace() {
-			return freeSpace;
-		}
-
-		public void setFreeSpace(Long freeSpace) {
-			if (freeSpace < 0)
-				return;
-			this.freeSpace = freeSpace;
-		}
-
-		public boolean isLock() {
-			return lock;
-		}
-
-		public void setLock(boolean lock) {
-			this.lock = lock;
-		}
-
-		public int getMaxObject() {
-			return maxObject;
-		}
-
-		public void setMaxObject(int maxObject) {
-			this.maxObject = maxObject;
-		}
-		
-		protected Entry clone() {
-			return new Entry(position, length, freeSpace);
-		}
-	}
+	
 }

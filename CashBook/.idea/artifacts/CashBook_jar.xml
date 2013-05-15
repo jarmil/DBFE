@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="CashBook:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/CashBook_jar</output-path>
+    <root id="archive" name="CashBook.jar">
+      <element id="module-output" name="CashBook" />
+      <element id="module-output" name="jcalendar-1.4" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/xstream-distribution-1.4.3-bin/xstream-1.4.3/lib/xstream-hibernate-1.4.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/xstream-distribution-1.4.3-bin/xstream-1.4.3/lib/xstream-benchmark-1.4.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/xstream-distribution-1.4.3-bin/xstream-1.4.3/lib/xstream-1.4.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/jcalendar-1.4/lib/jgoodies-common-1.2.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/jcalendar-1.4/lib/jcalendar-1.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/jcalendar-1.4/lib/jgoodies-looks-2.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/external/jcalendar-1.4/lib/junit-4.6.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

@@ -40,8 +40,6 @@ final class DatabaseHead implements Serializable {
 		this.dtbInfo = new Date().toString();
 
 	}
-
-	
 	
 	public int getDATABASE_HEAD_SIZE() {
 		return DATABASE_HEAD_SIZE;
