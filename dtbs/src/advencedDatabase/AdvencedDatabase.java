@@ -19,6 +19,10 @@ public class AdvencedDatabase {
 	private String dbFileName;
 	private SectorMap sectorMap;
 	private DatabaseHead head;
+	
+	public static void main(String[] args) {
+		
+	}
 
 	public AdvencedDatabase(String file) throws DatabaseException {
 		dbFileName = file;
