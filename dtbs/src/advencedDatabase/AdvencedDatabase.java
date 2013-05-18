@@ -21,7 +21,7 @@ public class AdvencedDatabase {
 	private DatabaseHead head;
 	
 	public static void main(String[] args) {
-		
+		System.out.print("adsdds");
 	}
 
 	public AdvencedDatabase(String file) throws DatabaseException {
