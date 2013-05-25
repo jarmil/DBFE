@@ -9,23 +9,31 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import exceptions.DatabaseException;
 
-public class AdvencedDatabase {
+public class DatabaseFileEngine {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 2166529033615542964L;
 	private RandomAccessFile dbFile;
-	private String dbFileName;
+	private String nameAndPath;
 	private SectorMap sectorMap;
 	private DatabaseHead head;
 	
 	
-	public AdvencedDatabase(String file) throws DatabaseException {
-		dbFileName = file;
+	public void create() throws DatabaseException{		
+		if(new File(nameAndPath).exists())
+			throw new DatabaseException("Soubor jiz existuje");
+		createDefaultDatabaseFile();
+	}
+	
+	public DatabaseFileEngine(String file) throws DatabaseException {
+		nameAndPath = file;
+		readDatabaseFileHeader();
+		readSectorMap();
 	}
 
-	private void allocate(Long size) throws DatabaseException {
+	protected void allocate(Long size) throws DatabaseException {
 		if (size <= 0)
 			return;
 		try {
@@ -37,7 +45,7 @@ public class AdvencedDatabase {
 
 	protected void createDefaultDatabaseFile() throws DatabaseException {
 		try {
-			File file = new File(dbFileName);
+			File file = new File(nameAndPath);
 			file.createNewFile();
 			dbFile = new RandomAccessFile(file, "rw");
 		} catch (IOException e) {
@@ -122,17 +130,17 @@ public class AdvencedDatabase {
 
 	}
 
-	private SectorMap readSectorMap() throws DatabaseException {
+	private void readSectorMap() throws DatabaseException {
 
 		Object object = readObject(head.getSectorMapPosition());
-
+		
 		if (object instanceof SectorMap) {
 			sectorMap = (SectorMap) object;
 		} else {
 			throw new DatabaseException("Nelze nacist tabulku sektoru "
 					+ object.toString());
 		}
-		return null;
+		
 	}
 
 	private void resizeTo(Long fullSize) throws DatabaseException {

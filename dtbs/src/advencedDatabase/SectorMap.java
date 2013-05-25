@@ -1,6 +1,7 @@
 package advencedDatabase;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 
 
@@ -49,5 +50,29 @@ final class SectorMap implements Serializable {
 		capacity *= capacity;
 	}
 
+	
+	public byte[] serializable() {
+		ByteBuffer bb = ByteBuffer.allocate(12 + (list.length * 8));
+		bb.putInt(size);
+		bb.putInt(capacity);
+		bb.putInt(list.length);
+		
+		for (int i = 0; i < list.length; i++) {
+			bb.putLong(list[i]);
+		}
+		return bb.array();		
+	}
+	
+	public void deSerializable(byte[] data) {
+		ByteBuffer bb = ByteBuffer.wrap(data);
+		size = bb.getInt();
+		capacity = bb.getInt();
+		int len = bb.getInt();
+		
+		list = new Long[len];
+		for (int i = 0; i < len; i++) {
+			list[i] = bb.getLong();
+		}
+	}
 	
 }
