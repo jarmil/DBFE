@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 
 
 
-final class SectorMap implements Serializable {
+final class SectorMap implements Serializable,DatabaseSerialization {
 	/**
 	 * 
 	 */

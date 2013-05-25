@@ -3,7 +3,7 @@ package advencedDatabase;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-final class DataHead implements Serializable {
+final class DataHead implements Serializable,DatabaseSerialization {
 
 	/**
 	 * 
