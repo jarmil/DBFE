@@ -115,6 +115,17 @@ public class DatabaseFileEngine {
 			throw new DatabaseException("Nelze zvetsit soubor " + e);
 		}
 	}
+	
+	protected boolean lockSector(int sector) throws DatabaseException {
+		
+		Long pointer = sectorMap.getSectorPointer(sector);
+		if(pointer == null)
+			return false;
+		SectorHead sectorHead =	readSectorHead(pointer);
+		sectorHead.setLock(true);
+		writeSectorHead(pointer, sectorHead);
+		return true;
+	}
 
 	protected void createDefaultDatabaseFile(File file)
 			throws DatabaseException {

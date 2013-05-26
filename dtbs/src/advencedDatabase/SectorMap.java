@@ -15,6 +15,8 @@ final class SectorMap implements Serializable,DatabaseSerialization {
 
 	private Long[] list;		
 	
+	private volatile SectorHead[] heads; 
+	
 	public SectorMap() {
 		capacity = 10;
 		size = 0;
@@ -38,11 +40,20 @@ final class SectorMap implements Serializable,DatabaseSerialization {
 		list[index] = position;
 	}
 
-	public Long get(int index) {
-		if (index >= size) {
+	public Long getSectorPointer(int index) {
+		if (index >= size || index < 0) {
 			return null;
 		}
 		return list[index];
+	}
+	
+	public Long getSectorPointer(Position pos) {
+		
+		return getSectorPointer(pos.sector);
+	}
+	
+	public Long getAbsolutePointer(Position pos) {
+		Long 
 	}
 
 	private void ensureCapacity() {
@@ -74,5 +85,6 @@ final class SectorMap implements Serializable,DatabaseSerialization {
 			list[i] = bb.getLong();
 		}
 	}
+
 	
 }
