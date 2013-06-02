@@ -15,36 +15,42 @@ final class SectorMap implements Serializable,DatabaseSerialization {
 
 	private Long[] list;		
 	
-	private volatile SectorHead[] heads; 
+	private transient SectorHead[] heads; 
 	
 	public SectorMap() {
 		capacity = 10;
 		size = 0;
 		list = new Long[capacity];
+		heads = new SectorHead[capacity];
 
 	}
+	
+	public void adhead(SectorHead head){
+		heads[head.getId()] = head;
+	}
 
-	public void add(Long position) {
+	public void add(Long position,SectorHead head) {
 		if (size >= capacity) {
 			ensureCapacity();
 		}
-		
+		System.out.print("dyhju");
 		list[size] = position;
+		heads[size] = head; 
 		size++;
 	}
 
-	public void change(int index, Long position) {
-		if (index >= size) {
+	public void change(int id, Long position) {
+		if (id >= size) {
 			return;
 		}
-		list[index] = position;
+		list[id] = position;
 	}
 
-	public Long getSectorPointer(int index) {
-		if (index >= size || index < 0) {
+	public Long getSectorPointer(int id) {
+		if (id >= size || id < 0) {
 			return null;
 		}
-		return list[index];
+		return list[id];
 	}
 	
 	public Long getSectorPointer(Position pos) {
@@ -53,14 +59,24 @@ final class SectorMap implements Serializable,DatabaseSerialization {
 	}
 	
 	public Long getAbsolutePointer(Position pos) {
-		Long 
+		Long pointer = getSectorPointer(pos.sector);
+		if(pointer == null)
+			return null;
+		return pointer + pos.position;
+			
 	}
 
 	private void ensureCapacity() {
-		list = java.util.Arrays.copyOf(list, capacity * 2);
-		capacity *= capacity;
+		capacity *= 2;
+		list = java.util.Arrays.copyOf(list, capacity);		
+		heads = java.util.Arrays.copyOf(heads, capacity);
 	}
-
+	
+	public void addReadSectorHead(SectorHead head) {
+		if(heads == null)
+			heads = new SectorHead[capacity];
+		heads[head.getId()] = head;
+	}
 	
 	public byte[] serializable() {
 		ByteBuffer bb = ByteBuffer.allocate(12 + (list.length * 8));
@@ -86,5 +102,7 @@ final class SectorMap implements Serializable,DatabaseSerialization {
 		}
 	}
 
-	
+	public int getSize(){
+		return size;
+	}
 }

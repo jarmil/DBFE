@@ -48,8 +48,9 @@ public class DatabaseFileEngine {
 		writeSectorMap();
 	}
 
-	protected Object readObject(Long pos) throws DatabaseException {
-
+	protected Object readObject(Position position) throws DatabaseException {
+		
+		Long pos = sectorMap.getAbsolutePointer(position);
 		DataHead dataHead = readDataHead(pos);
 		try {
 			byte[] bs = readByteArray(pos + dataHead.getDATA_HEAD_SIZE(),
@@ -59,6 +60,12 @@ public class DatabaseFileEngine {
 			throw new DatabaseException("Chyba pri cteni ze zadaneho umisteni "
 					+ e);
 		}
+	}
+	
+	private void readSectorHeads(){
+		/*for (int i = 0; i < sectorMap.; i++) {
+			
+		}*/
 	}
 
 	protected void readObject(Long pos, DatabaseSerialization serialization)
@@ -141,7 +148,7 @@ public class DatabaseFileEngine {
 		writeDatabaseFileHeader();
 		SectorHead sh = new SectorHead(head.getBlockSize(), 0);
 		writeSectorHead(head.getDataPosition(), sh);
-		sectorMap.add(head.getDataPosition());
+		sectorMap.add(head.getDataPosition(),sh);
 		writeObject(sectorMap, head.getSectorMapPosition());
 	}
 
