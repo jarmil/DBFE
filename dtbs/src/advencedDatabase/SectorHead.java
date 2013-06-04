@@ -1,46 +1,42 @@
 package advencedDatabase;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
 
-final class SectorHead implements Serializable,DatabaseSerialization {
+final class SectorHead implements DatabaseSerialization {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -235368119475640939L;
-	protected int id;	
+	protected int id;
 	protected byte lock;
-	protected int maxAllowedObjects;
 	protected Long sectorSize;
 	protected Long emptySpacePointer;
 	protected Long freeSpace;
-	private final int SECTOR_HEAD_SIZE = 33;
+
+	private final int SECTOR_HEAD_SIZE = 29;
 
 	public SectorHead() {
-		
+
 	}
-	
-	
-	public SectorHead(Long sectorSize, Long emptySpacePointer,
-			Long freeSpace, int id,boolean lock,int maxAllowedObjects) {
+
+	public SectorHead(Long sectorSize, Long emptySpacePointer, Long freeSpace,
+			int id, boolean lock) {
 		super();
 		this.sectorSize = sectorSize;
 		this.emptySpacePointer = emptySpacePointer;
 		this.freeSpace = freeSpace;
 		this.id = id;
-		this.lock = (byte) (lock?1:0);
-		this.maxAllowedObjects = maxAllowedObjects;
+		this.lock = (byte) (lock ? 1 : 0);
 	}
 
 	public SectorHead(Long sectorSize, int id) {
 		super();
 		this.sectorSize = sectorSize;
-		this.emptySpacePointer = (long)SECTOR_HEAD_SIZE;
+		this.emptySpacePointer = (long) SECTOR_HEAD_SIZE;
 		this.freeSpace = sectorSize - SECTOR_HEAD_SIZE;
 		this.id = id;
-		maxAllowedObjects = -1;
 		lock = 0;
-		
+
 	}
 
 	public Long getSectorSize() {
@@ -76,15 +72,7 @@ final class SectorHead implements Serializable,DatabaseSerialization {
 	}
 
 	protected void setLock(boolean lock) {
-		this.lock = (byte) (lock?1:0);
-	}
-
-	public int getMaxAllowedObjects() {
-		return maxAllowedObjects;
-	}
-
-	protected void setMaxAllowedObjects(int maxAllowedObjects) {
-		this.maxAllowedObjects = maxAllowedObjects;
+		this.lock = (byte) (lock ? 1 : 0);
 	}
 
 	public int getSECTOR_HEAD_SIZE() {
@@ -102,58 +90,61 @@ final class SectorHead implements Serializable,DatabaseSerialization {
 	public byte[] serializable() {
 		ByteBuffer bb = ByteBuffer.allocate(SECTOR_HEAD_SIZE);
 		bb.putInt(id);
-		bb.put((byte) lock );
-		bb.putInt(maxAllowedObjects);
+		bb.put((byte) lock);
 		bb.putLong(sectorSize);
 		bb.putLong(emptySpacePointer);
 		bb.putLong(freeSpace);
-		return bb.array();		
+		return bb.array();
 	}
-	
+
 	public void deSerializable(byte[] data) {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		id = bb.getInt();
 		lock = bb.get();
-		maxAllowedObjects = bb.getInt();
 		sectorSize = bb.getLong();
 		emptySpacePointer = bb.getLong();
-		freeSpace = bb.getLong();		
+		freeSpace = bb.getLong();
 	}
-	
-	public boolean check(Long size){
-		if(lock  == (byte)1 ||  maxAllowedObjects == 0)
+
+	public boolean check(Long size) {
+		if (lock == (byte) 1)
 			return false;
-		if(freeSpace == -1){
+		if (freeSpace >= size || sectorSize == -1) {
 			return true;
-		}else if (freeSpace < size) {
+		} else {
 			return false;
-		}else{
-			return true;
 		}
 	}
-	
-	protected boolean forcedCheck(Long size){
-		if(freeSpace == -1){
+
+	protected boolean checkAndIngnoreLock(Long size) {
+		if (freeSpace >= size || sectorSize == -1) {
 			return true;
-		}else if (freeSpace < size) {
+		} else {
 			return false;
-		}else{
-			return true;
 		}
 	}
-	
-	public SectorHead reCount(Long objectSize) {
-		if(check(objectSize)){
-			if(!(freeSpace == -1)){			
-				freeSpace -=objectSize;
-			}
+
+	public SectorHead updateHead(Long objectSize) {
+		if (checkAndIngnoreLock(objectSize)) {
 			emptySpacePointer += objectSize;
-			
-			if(!(maxAllowedObjects == -1)){
-				maxAllowedObjects--;
+			if (!(sectorSize == -1)) {
+				freeSpace -= objectSize;
 			}
+		} else {
+			return null;
 		}
 		return this;
 	}
-	
+
+	public boolean equals(SectorHead head) {
+		if ((id == head.id) && (lock == head.lock)
+				&& (sectorSize == head.sectorSize)
+				&& (emptySpacePointer == head.emptySpacePointer)
+				&& (freeSpace == head.freeSpace)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 }

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
-final class DatabaseHead implements Serializable {
+final class DatabaseHead implements DatabaseSerialization {
 	/**
 	 * 
 	 */

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
+
 import exceptions.DatabaseException;
 
 public class DatabaseFileEngine {
@@ -41,7 +42,18 @@ public class DatabaseFileEngine {
 		}
 		readDatabaseFileHeader();
 		readSectorMap();
+		checkDatabaseConsistence();
+		
 	}
+	protected void checkDatabaseConsistence() throws DatabaseException{
+		int index = 0;
+		for(long l: sectorMap.getPointerList()){
+			if(!readSectorHead(l).equals(sectorMap.getSectorHead(index++)))
+				throw new DatabaseException("Neco nesedi nesouhlasi hlavicky sektoru");
+		}
+		
+	}
+
 
 	public void close() throws DatabaseException {
 		writeDatabaseFileHeader();
@@ -50,7 +62,7 @@ public class DatabaseFileEngine {
 
 	protected Object readObject(Position position) throws DatabaseException {
 		
-		Long pos = sectorMap.getAbsolutePointer(position);
+		Long pos = sectorMap.getDataAbsolutePointer(position);
 		DataHead dataHead = readDataHead(pos);
 		try {
 			byte[] bs = readByteArray(pos + dataHead.getDATA_HEAD_SIZE(),
@@ -60,12 +72,6 @@ public class DatabaseFileEngine {
 			throw new DatabaseException("Chyba pri cteni ze zadaneho umisteni "
 					+ e);
 		}
-	}
-	
-	private void readSectorHeads(){
-		/*for (int i = 0; i < sectorMap.; i++) {
-			
-		}*/
 	}
 
 	protected void readObject(Long pos, DatabaseSerialization serialization)
