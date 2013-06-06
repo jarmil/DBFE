@@ -70,13 +70,16 @@ final class SectorMap implements DatabaseSerialization {
 	}	
 	
 	public byte[] serializable() {
-		ByteBuffer bb = ByteBuffer.allocate(8 + (size * sectors[0].getHead().getSECTOR_HEAD_SIZE()));
+		ByteBuffer bb = ByteBuffer.allocate(16 + (size * sectors[0].getHead().getSECTOR_HEAD_SIZE()));
 		bb.putInt(size);
 		bb.putInt(capacity);
-
-		for (Pair pair: sectors) {
-			bb.putLong(pair.position);
-			bb.put(pair.head.serializable());
+		System.out.println("cap> " + bb.capacity());
+		for (int i = 0; i < size; i++) {
+			
+			bb.putLong(sectors[i].position);
+			byte[] tmp = sectors[i].head.serializable();
+			System.out.println("dsf" + tmp.length);
+			bb.put(tmp);
 		}
 		return bb.array();		
 	}
@@ -90,8 +93,8 @@ final class SectorMap implements DatabaseSerialization {
 		ByteBuffer bb = ByteBuffer.wrap(data);
 		size = bb.getInt();
 		capacity = bb.getInt();
-		
 		for (int i = 0; i < size; i++) {	
+			
 			tmpLong = bb.getLong();
 			tmpSectorHead.deSerializable((bb.get(new byte[headSize])).array());
 			sectors[i] = new Pair(tmpLong,tmpSectorHead);

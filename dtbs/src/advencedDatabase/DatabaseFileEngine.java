@@ -21,6 +21,16 @@ public class DatabaseFileEngine {
 	private SectorMap sectorMap;
 	private DatabaseHead head;
 
+	public static void main(String[] args) throws DatabaseException {
+		DatabaseFileEngine dfEngine = new DatabaseFileEngine();
+		//dfEngine.create("aaa.bin");
+		dfEngine.create("aaa.bin");
+		dfEngine.load("aaa.bin");
+	}
+	
+	
+	
+	
 	public DatabaseFileEngine() throws DatabaseException {
 
 	}
@@ -33,27 +43,37 @@ public class DatabaseFileEngine {
 	}
 
 	public void load(String file) throws DatabaseException {
-		if (!new File(file).exists())
+		System.out.println(System.getProperty("user.home"));
+		if (!(new File(file).exists())){
+			System.out.println("sdgfgf");
 			throw new DatabaseException("Soubor neexistuje vytvorte novy");
+		}
 		try {
 			dbFile = new RandomAccessFile(file, "rw");
 		} catch (FileNotFoundException e) {
 			throw new DatabaseException(e.getMessage());
 		}
+		System.out.print(new File(file).getAbsolutePath());
+		System.out.println("asfg");
 		readDatabaseFileHeader();
+		System.out.println(sectorMap.getSize());
 		readSectorMap();
 		checkDatabaseConsistence();
-		
 	}
-	protected void checkDatabaseConsistence() throws DatabaseException{
+	
+protected void checkDatabaseConsistence() throws DatabaseException{
 		int index = 0;
 		for(long l: sectorMap.getPointerList()){
-			if(!readSectorHead(l).equals(sectorMap.getSectorHead(index++)))
+			SectorHead sectorHead = readSectorHead(l);
+			SectorHead sectorHead2 = sectorMap.getSectorHead(0);
+			if(!sectorHead.equals(sectorMap.getSectorHead(index++))){
+				System.out.println(sectorHead.id + " "+ sectorHead.lock + " "+ sectorHead.freeSpace + " "+ sectorHead.sectorSize);
+			System.out.println(sectorHead2.id + " "+ sectorHead2.lock + " "+ sectorHead2.freeSpace + " "+ sectorHead2.sectorSize);
 				throw new DatabaseException("Neco nesedi nesouhlasi hlavicky sektoru");
+			}
 		}
 		
 	}
-
 
 	public void close() throws DatabaseException {
 		writeDatabaseFileHeader();

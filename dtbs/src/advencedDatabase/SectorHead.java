@@ -90,7 +90,7 @@ final class SectorHead implements DatabaseSerialization {
 	public byte[] serializable() {
 		ByteBuffer bb = ByteBuffer.allocate(SECTOR_HEAD_SIZE);
 		bb.putInt(id);
-		bb.put((byte) lock);
+		bb.put(lock);
 		bb.putLong(sectorSize);
 		bb.putLong(emptySpacePointer);
 		bb.putLong(freeSpace);
